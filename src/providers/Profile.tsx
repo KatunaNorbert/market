@@ -7,7 +7,14 @@ import React, {
 } from 'react'
 import { Profile } from '../models/Profile'
 
-const ProfileContext = createContext(null)
+interface ProfileProviderValue {
+  profile: Profile | undefined
+  account: String | undefined
+  setProfile: (profile: Profile) => void
+  setAccount: (account: String) => void
+}
+
+const ProfileContext = createContext({} as ProfileProviderValue)
 
 export default function ProfileProvider({
   children
@@ -15,11 +22,13 @@ export default function ProfileProvider({
   children: ReactNode
 }): ReactElement {
   const [profile, setProfile] = useState<Profile>()
-  const [account, setAccount] = useState()
+  const [account, setAccount] = useState('')
 
   return (
     <ProfileContext.Provider
-      value={{ profile, account, setProfile, setAccount }}
+      value={
+        { profile, account, setProfile, setAccount } as ProfileProviderValue
+      }
     >
       {children}
     </ProfileContext.Provider>
