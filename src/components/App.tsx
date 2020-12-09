@@ -6,6 +6,7 @@ import styles from './App.module.css'
 import { useSiteMetadata } from '../hooks/useSiteMetadata'
 import { useOcean } from '@oceanprotocol/react'
 import Alert from './atoms/Alert'
+import ProfileProvider from '../providers/Profile'
 import { graphql, PageProps, useStaticQuery } from 'gatsby'
 
 const contentQuery = graphql`
@@ -41,26 +42,28 @@ export default function App({
   } = useOcean()
 
   return (
-    <Styles>
-      <div className={styles.app}>
-        <Header />
+    <ProfileProvider>
+      <Styles>
+        <div className={styles.app}>
+          <Header />
 
-        {(props as PageProps).uri === '/' && (
-          <Alert text={warning} state="info" />
-        )}
+          {(props as PageProps).uri === '/' && (
+            <Alert text={warning} state="info" />
+          )}
 
-        {isAccountInPurgatory && (
-          <Alert
-            title={purgatory.title}
-            badge={`Reason: ${accountPurgatory?.reason}`}
-            text={purgatory.description}
-            state="error"
-          />
-        )}
+          {isAccountInPurgatory && (
+            <Alert
+              title={purgatory.title}
+              badge={`Reason: ${accountPurgatory?.reason}`}
+              text={purgatory.description}
+              state="error"
+            />
+          )}
 
-        <main className={styles.main}>{children}</main>
-        <Footer />
-      </div>
-    </Styles>
+          <main className={styles.main}>{children}</main>
+          <Footer />
+        </div>
+      </Styles>
+    </ProfileProvider>
   )
 }

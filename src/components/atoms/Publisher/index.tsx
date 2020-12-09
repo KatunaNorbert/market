@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect, useState } from 'react'
 import styles from './index.module.css'
 import classNames from 'classnames/bind'
 import Tooltip from '../Tooltip'
-import { Profile } from '../../../models/Profile'
 import { Link } from 'gatsby'
 import get3BoxProfile from '../../../utils/profile'
 import EtherscanLink from '../EtherscanLink'
@@ -11,6 +10,7 @@ import axios from 'axios'
 import { useOcean } from '@oceanprotocol/react'
 import { ReactComponent as Info } from '../../../images/info.svg'
 import ProfileDetails from './ProfileDetails'
+import { useProfile } from '../../../providers/Profile'
 import Add from './Add'
 
 const cx = classNames.bind(styles)
@@ -25,9 +25,8 @@ export default function Publisher({
   className?: string
 }): ReactElement {
   const { networkId, accountId } = useOcean()
-  const [profile, setProfile] = useState<Profile>()
   const [name, setName] = useState<string>()
-
+  const { profile, setProfile, setAccount } = useProfile()
   const showAdd = account === accountId && !profile
 
   useEffect(() => {
@@ -37,11 +36,11 @@ export default function Publisher({
     const source = axios.CancelToken.source()
 
     async function get3Box() {
-      const profile = await get3BoxProfile(account, source.token)
-      if (!profile) return
-
-      setProfile(profile)
-      const { name, emoji } = profile
+      const newProfile = await get3BoxProfile(account, source.token)
+      if (!newProfile) return
+      setProfile(newProfile)
+      setAccount(account)
+      const { name, emoji } = newProfile
       name && setName(`${emoji || ''} ${name}`)
     }
     get3Box()
